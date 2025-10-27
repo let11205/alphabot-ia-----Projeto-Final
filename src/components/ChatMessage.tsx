@@ -1,0 +1,50 @@
+import { Card } from "@/components/ui/card";
+import { Bot, User } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface ChatMessageProps {
+  role: "user" | "assistant";
+  content: string;
+  isLoading?: boolean;
+}
+
+const ChatMessage = ({ role, content, isLoading }: ChatMessageProps) => {
+  const isBot = role === "assistant";
+
+  return (
+    <div className={cn("flex gap-3", isBot ? "justify-start" : "justify-end")}>
+      {isBot && (
+        <div className="w-8 h-8 rounded-full bg-gradient-accent flex items-center justify-center flex-shrink-0 shadow-glow">
+          <Bot className="w-5 h-5" />
+        </div>
+      )}
+      <Card
+        className={cn(
+          "max-w-[80%] p-4 transition-all",
+          isBot
+            ? "bg-gradient-card backdrop-blur-xl border-border/50"
+            : "bg-primary text-primary-foreground shadow-glow border-primary"
+        )}
+      >
+        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+          {isLoading ? (
+            <span className="inline-flex gap-1">
+              <span className="animate-pulse">●</span>
+              <span className="animate-pulse delay-100">●</span>
+              <span className="animate-pulse delay-200">●</span>
+            </span>
+          ) : (
+            content
+          )}
+        </p>
+      </Card>
+      {!isBot && (
+        <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
+          <User className="w-5 h-5" />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ChatMessage;

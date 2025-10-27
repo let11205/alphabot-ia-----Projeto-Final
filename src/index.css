@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 263 70% 8%;
+    --foreground: 263 10% 98%;
+
+    --card: 263 60% 10%;
+    --card-foreground: 263 10% 98%;
+
+    --popover: 263 60% 10%;
+    --popover-foreground: 263 10% 98%;
+
+    --primary: 263 90% 65%;
+    --primary-foreground: 263 10% 98%;
+
+    --secondary: 263 50% 20%;
+    --secondary-foreground: 263 10% 98%;
+
+    --muted: 263 40% 15%;
+    --muted-foreground: 263 20% 60%;
+
+    --accent: 280 85% 60%;
+    --accent-foreground: 263 10% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 263 10% 98%;
+
+    --border: 263 40% 20%;
+    --input: 263 40% 18%;
+    --ring: 263 90% 65%;
+
+    --radius: 1rem;
+
+    /* Brand colors - elegant purple palette */
+    --brand-900: 263 70% 8%;
+    --brand-800: 263 65% 12%;
+    --brand-700: 263 60% 18%;
+    --brand-600: 263 55% 25%;
+    --brand-500: 263 70% 40%;
+    --brand-400: 263 85% 55%;
+    --brand-300: 263 90% 65%;
+    --brand-200: 263 85% 75%;
+    --brand-100: 263 80% 88%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(263 70% 8%), hsl(263 65% 12%));
+    --gradient-accent: linear-gradient(135deg, hsl(263 85% 55%), hsl(280 85% 60%));
+    --gradient-card: linear-gradient(145deg, hsl(263 60% 10% / 0.8), hsl(263 50% 15% / 0.6));
+
+    /* Shadows */
+    --shadow-glow: 0 0 40px hsl(263 90% 65% / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(263 70% 8% / 0.5);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
