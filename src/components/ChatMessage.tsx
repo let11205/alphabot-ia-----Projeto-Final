@@ -39,25 +39,20 @@ const ChatMessage = ({ role, content, isLoading }: ChatMessageProps) => {
             : "bg-primary text-primary-foreground shadow-glow border-primary"
         )}
       >
-        <div 
-          className="text-sm leading-relaxed formatted-content"
-          dangerouslySetInnerHTML={
-            isLoading 
-              ? undefined 
-              : isBot 
-                ? { __html: formatBotMessage(content) } 
-                : undefined
-          }
-        >
-          {isLoading && (
-            <span className="inline-flex gap-1">
-              <span className="animate-pulse">●</span>
-              <span className="animate-pulse delay-100">●</span>
-              <span className="animate-pulse delay-200">●</span>
-            </span>
-          )}
-          {!isLoading && !isBot && <span className="whitespace-pre-wrap">{content}</span>}
-        </div>
+        {isLoading ? (
+          <span className="inline-flex gap-1 text-sm leading-relaxed">
+            <span className="animate-pulse">●</span>
+            <span className="animate-pulse delay-100">●</span>
+            <span className="animate-pulse delay-200">●</span>
+          </span>
+        ) : isBot ? (
+          <div
+            className="text-sm leading-relaxed formatted-content"
+            dangerouslySetInnerHTML={{ __html: formatBotMessage(content) }}
+          />
+        ) : (
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
+        )}
       </Card>
       {!isBot && (
         <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
