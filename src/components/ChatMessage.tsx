@@ -1,13 +1,25 @@
 import { Card } from "@/components/ui/card";
 import { Bot, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import ReactMarkdown from "react-markdown";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
   content: string;
   isLoading?: boolean;
 }
+
+const formatBotMessage = (text: string): string => {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold">$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul class="list-disc ml-4 mb-2 space-y-1">$&</ul>')
+    .replace(/\n\n/g, '</p><p class="mb-2">')
+    .replace(/^(.+)$/gm, (match) => {
+      if (match.startsWith('<') || match.trim() === '') return match;
+      return `<p class="mb-2">${match}</p>`;
+    });
+};
 
 const ChatMessage = ({ role, content, isLoading }: ChatMessageProps) => {
   const isBot = role === "assistant";
@@ -27,31 +39,24 @@ const ChatMessage = ({ role, content, isLoading }: ChatMessageProps) => {
             : "bg-primary text-primary-foreground shadow-glow border-primary"
         )}
       >
-        <div className="text-sm leading-relaxed">
-          {isLoading ? (
+        <div 
+          className="text-sm leading-relaxed formatted-content"
+          dangerouslySetInnerHTML={
+            isLoading 
+              ? undefined 
+              : isBot 
+                ? { __html: formatBotMessage(content) } 
+                : undefined
+          }
+        >
+          {isLoading && (
             <span className="inline-flex gap-1">
               <span className="animate-pulse">●</span>
               <span className="animate-pulse delay-100">●</span>
               <span className="animate-pulse delay-200">●</span>
             </span>
-          ) : isBot ? (
-            <ReactMarkdown
-              components={{
-                p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                ul: ({ children }) => <ul className="list-disc ml-4 mb-2 space-y-1">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal ml-4 mb-2 space-y-1">{children}</ol>,
-                li: ({ children }) => <li>{children}</li>,
-                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-                h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
-                h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
-              }}
-            >
-              {content}
-            </ReactMarkdown>
-          ) : (
-            <p className="whitespace-pre-wrap">{content}</p>
           )}
+          {!isLoading && !isBot && <span className="whitespace-pre-wrap">{content}</span>}
         </div>
       </Card>
       {!isBot && (
