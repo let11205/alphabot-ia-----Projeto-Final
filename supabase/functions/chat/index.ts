@@ -265,11 +265,11 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "google/gemini-2.5-pro",
           messages: [
             { 
               role: "system", 
-              content: "Você é o Alphabot IA. Informe educadamente que nenhuma planilha foi enviada ainda e peça ao usuário que envie arquivos CSV, XLS ou XLSX com dados de vendas."
+              content: "Você é o Alphabot IA, analista de vendas da Alpha Insights. Informe educadamente que nenhuma planilha foi enviada ainda. Peça ao usuário que envie arquivos CSV, XLS ou XLSX com dados de vendas para você poder analisar."
             },
             { role: "user", content: userQuery }
           ],
@@ -312,11 +312,11 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
+          model: "google/gemini-2.5-pro",
           messages: [
             { 
               role: "system", 
-              content: `Você é analista de vendas. Informe que não há dados para o período solicitado e sugira os períodos disponíveis: ${availablePeriods}. Seja educado e objetivo.`
+              content: `Você é o Alphabot IA, analista de vendas da Alpha Insights. Informe educadamente que não encontrou dados para o período solicitado nas planilhas enviadas. Períodos disponíveis: ${availablePeriods}. Ofereça usar os dados disponíveis para responder a pergunta.`
             },
             { role: "user", content: userQuery }
           ],
@@ -340,21 +340,22 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
-    const systemPrompt = `Você é um analista de vendas da Alpha Insights. Responda em português brasileiro de forma objetiva e profissional.
+    const systemPrompt = `Você é o Alphabot IA, analista de vendas da Alpha Insights. Responda em português brasileiro de forma objetiva, profissional e analítica.
 
-DADOS DA ANÁLISE (já calculados por código):
+DADOS DA ANÁLISE (já calculados por código - use APENAS estes números):
 ${JSON.stringify(analysis, null, 2)}
 
-ESCOPO: ${scopeDesc}
+ESCOPO DA ANÁLISE: ${scopeDesc}
 
-INSTRUÇÕES:
-- Use APENAS os números fornecidos acima
-- Cite períodos, produtos e valores específicos
-- Seja objetivo, claro e profissional
-- Formate valores monetários com R$ e duas casas decimais
-- Formate percentuais com %
-- Se houver grupos/ranking, apresente de forma clara
-- Se houver evolução temporal, explique a tendência`;
+INSTRUÇÕES OBRIGATÓRIAS:
+- Use APENAS os números fornecidos acima (não invente ou estime dados)
+- Sempre cite períodos específicos e unidades nas respostas
+- Formate valores monetários como R$ com duas casas decimais (ex: R$ 1.234,56)
+- Formate percentuais com símbolo % (ex: 15,3%)
+- Apresente rankings e comparações de forma clara e estruturada
+- Se houver evolução temporal, explique tendências e variações
+- Seja direto, objetivo e use linguagem profissional
+- Se um dado solicitado não existir, informe isso educadamente e baseie-se nos dados disponíveis`;
 
     console.log('Calling Gemini for narrative generation');
 
@@ -365,7 +366,7 @@ INSTRUÇÕES:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-pro",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userQuery }

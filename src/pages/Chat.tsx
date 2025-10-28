@@ -20,7 +20,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Olá! Sou o Alphabot IA. Envie uma ou mais planilhas de vendas e eu faço a análise para você.",
+      content: "Olá! Sou o Alphabot IA. Envie uma planilha de vendas e eu farei a análise para você.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -39,7 +39,7 @@ const Chat = () => {
       
       if (count !== null && count > 0) {
         setStoredSheetsCount(count);
-        setDataset(count === 1 ? '1 planilha disponível' : `${count} planilhas disponíveis`);
+        setDataset(count === 1 ? '1 planilha carregada' : `${count} planilhas carregadas`);
       }
     };
     loadSheetsCount();
@@ -77,7 +77,17 @@ const Chat = () => {
       
       const newCount = storedSheetsCount + successCount;
       setStoredSheetsCount(newCount);
-      setDataset(newCount === 1 ? '1 planilha disponível' : `${newCount} planilhas disponíveis`);
+      setDataset(newCount === 1 ? '1 planilha carregada' : `${newCount} planilhas carregadas`);
+      
+      // Add confirmation message after upload
+      if (successCount > 0) {
+        setMessages((prev) => [...prev, {
+          role: "assistant",
+          content: successCount === 1 
+            ? "Planilha carregada! Agora você pode me fazer perguntas sobre seus dados."
+            : `${successCount} planilhas carregadas! Agora você pode me fazer perguntas sobre seus dados.`
+        }]);
+      }
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(error instanceof Error ? error.message : 'Erro ao processar arquivo');
