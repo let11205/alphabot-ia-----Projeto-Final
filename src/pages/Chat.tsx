@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import { Send, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import FileUpload from "@/components/FileUpload";
@@ -24,26 +24,8 @@ const Chat = () => {
     },
   ]);
   const [input, setInput] = useState("");
-  const [dataset, setDataset] = useState<string>("Nenhuma planilha carregada");
   const [isLoading, setIsLoading] = useState(false);
-  const [storedSheetsCount, setStoredSheetsCount] = useState<number>(0);
 
-  // Load stored sheets count on mount
-  useEffect(() => {
-    const loadSheetsCount = async () => {
-      if (!user) return;
-      const { count } = await (supabase as any)
-        .from('spreadsheets')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
-      
-      if (count !== null && count > 0) {
-        setStoredSheetsCount(count);
-        setDataset(count === 1 ? '1 planilha carregada' : `${count} planilhas carregadas`);
-      }
-    };
-    loadSheetsCount();
-  }, [user]);
 
   const handleFileUpload = async (files: File[]) => {
     if (files.length === 0 || !session) return;
@@ -73,20 +55,6 @@ const Chat = () => {
 
         successCount++;
         toast.success(`${file.name} carregado com sucesso!`);
-      }
-      
-      const newCount = storedSheetsCount + successCount;
-      setStoredSheetsCount(newCount);
-      setDataset(newCount === 1 ? '1 planilha carregada' : `${newCount} planilhas carregadas`);
-      
-      // Add confirmation message after upload
-      if (successCount > 0) {
-        setMessages((prev) => [...prev, {
-          role: "assistant",
-          content: successCount === 1 
-            ? "Planilha carregada! Agora você pode me fazer perguntas sobre seus dados."
-            : `${successCount} planilhas carregadas! Agora você pode me fazer perguntas sobre seus dados.`
-        }]);
       }
     } catch (error) {
       console.error('Upload error:', error);
@@ -184,12 +152,7 @@ const Chat = () => {
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-xl bg-card/30 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold">Alphabot IA</h1>
-            <Badge variant="outline" className="text-sm">
-              {dataset}
-            </Badge>
-          </div>
+          <h1 className="text-xl font-bold">Alphabot IA</h1>
           <Button
             variant="ghost"
             size="sm"
@@ -220,11 +183,6 @@ const Chat = () => {
         {/* Upload Section */}
         <div className="space-y-3">
           <FileUpload onFilesUpload={handleFileUpload} />
-          {storedSheetsCount > 0 && (
-            <p className="text-sm text-muted-foreground text-center">
-              💡 Você pode enviar mais planilhas para análises mais completas
-            </p>
-          )}
         </div>
 
         {/* Input Area */}
