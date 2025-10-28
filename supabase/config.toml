@@ -1,1 +1,7 @@
 project_id = "exdehglvwdgwcanmxuvh"
+
+[functions.chat]
+verify_jwt = true
+
+[functions.parse-spreadsheet]
+verify_jwt = true

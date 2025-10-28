@@ -20,13 +20,30 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Olá! Sou o Alphabot IA. Envie uma planilha de vendas e eu farei a análise para você.",
+      content: "Olá! Sou o Alphabot IA. Envie uma ou mais planilhas de vendas e eu faço a análise para você.",
     },
   ]);
   const [input, setInput] = useState("");
   const [dataset, setDataset] = useState<string>("Nenhuma planilha carregada");
   const [isLoading, setIsLoading] = useState(false);
   const [storedSheetsCount, setStoredSheetsCount] = useState<number>(0);
+
+  // Load stored sheets count on mount
+  useEffect(() => {
+    const loadSheetsCount = async () => {
+      if (!user) return;
+      const { count } = await (supabase as any)
+        .from('spreadsheets')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+      
+      if (count !== null && count > 0) {
+        setStoredSheetsCount(count);
+        setDataset(count === 1 ? '1 planilha disponível' : `${count} planilhas disponíveis`);
+      }
+    };
+    loadSheetsCount();
+  }, [user]);
 
   const handleFileUpload = async (files: File[]) => {
     if (files.length === 0 || !session) return;
@@ -60,7 +77,7 @@ const Chat = () => {
       
       const newCount = storedSheetsCount + successCount;
       setStoredSheetsCount(newCount);
-      setDataset(`${newCount} planilha(s) disponível(is)`);
+      setDataset(newCount === 1 ? '1 planilha disponível' : `${newCount} planilhas disponíveis`);
     } catch (error) {
       console.error('Upload error:', error);
       toast.error(error instanceof Error ? error.message : 'Erro ao processar arquivo');
@@ -190,9 +207,14 @@ const Chat = () => {
           )}
         </div>
 
-        {/* Upload & Sync Section */}
+        {/* Upload Section */}
         <div className="space-y-3">
           <FileUpload onFilesUpload={handleFileUpload} />
+          {storedSheetsCount > 0 && (
+            <p className="text-sm text-muted-foreground text-center">
+              💡 Você pode enviar mais planilhas para análises mais completas
+            </p>
+          )}
         </div>
 
         {/* Input Area */}

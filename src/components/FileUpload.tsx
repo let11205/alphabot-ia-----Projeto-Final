@@ -46,10 +46,10 @@ const FileUpload = ({ onFilesUpload }: FileUploadProps) => {
         ) : (
           <>
             <p className="text-sm font-medium">
-              Arraste e solte planilhas aqui
+              Arraste e solte ou clique para enviar planilhas
             </p>
             <p className="text-xs text-muted-foreground">
-              Suporta CSV, XLS, XLSX
+              .csv, .xls, .xlsx
             </p>
           </>
         )}
